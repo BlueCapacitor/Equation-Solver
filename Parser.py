@@ -68,7 +68,7 @@ def fixSyntax(eq):
 
 
 def splitOrdOp(eq):
-    for op in symbols["operation"]:
+    for op in (symbols["operation"][:: -1]):
         if(op in eq):
             i = eq.index(op)
             return([eq[0: i], eq[i], eq[i + 1:]])

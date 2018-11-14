@@ -49,17 +49,18 @@ class tree:
 
 
 def showTree(t):
+    out = ""
+
     if(t.node_type == "operation"):
         args = [showTree(t2) for t2 in t.arguments]
 
-        out = str(t.node) + '('
-        for arg in args:
-            out += str(arg)
+        out += str(t.node) + '('
+        out += str(args[0])
+        for arg in args[1:]:
+            out += ", " + str(arg)
         out += ')'
 
-        return(out)
+    else:
+        out = str(t.arguments[0])
 
-    out = t.arguments[0]
-    for arg in t.arguments[1:]:
-        out += ", " + str(arg)
     return(out)
