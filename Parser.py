@@ -56,10 +56,27 @@ def split(eq):
 
 
 def fixSyntax(eq):
+    if(len(eq) <= 1):
+        return(eq)
+
+    if(eq[0] == '-' and strType[eq[1]] == "number"):
+        eq[1] = 0 - eq[1]
+        del eq[0]
+
     while(True):
         for i in range(len(eq) - 1):
             if(strType(eq[i]) == "number" and strType(eq[i + 1]) == "object"):
                 eq = eq[0: i + 1] + ["*"] + eq[i + 1: len(eq)]
+                break
+        else:
+            break
+
+    while(True):
+        for i in range(len(eq) - 2):
+            if(strType(eq[i]) == "operation" and
+               eq[i + 1] == '-' and
+               strType(eq[i + 2]) == "number"):
+                eq = eq[0: i + 1] + [0 - eq[i + 2]] + eq[i + 3: len(eq)]
                 break
         else:
             break
