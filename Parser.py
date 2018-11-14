@@ -65,7 +65,8 @@ def fixSyntax(eq):
 
     while(True):
         for i in range(len(eq) - 1):
-            if(strType(eq[i]) == "number" and strType(eq[i + 1]) == "object"):
+            if((strType(eq[i]) == "number" and strType(eq[i + 1]) == "object") or
+               (strType(eq[i]) == "object" and strType(eq[i + 1]) == "object")):
                 eq = eq[0: i + 1] + ["*"] + eq[i + 1: len(eq)]
                 break
         else:
