@@ -47,20 +47,19 @@ class tree:
             self.node_type = "operation"
             self.arguments = arguments
 
+    def show(self):
+        out = ""
 
-def showTree(t):
-    out = ""
+        if(self.node_type == "operation"):
+            args = [branch.show() for branch in self.arguments]
 
-    if(t.node_type == "operation"):
-        args = [showTree(t2) for t2 in t.arguments]
+            out += str(self.node) + '('
+            out += str(args[0])
+            for arg in args[1:]:
+                out += ", " + str(arg)
+                out += ')'
 
-        out += str(t.node) + '('
-        out += str(args[0])
-        for arg in args[1:]:
-            out += ", " + str(arg)
-        out += ')'
+        else:
+            out = str(self.arguments[0])
 
-    else:
-        out = str(t.arguments[0])
-
-    return(out)
+        return(out)
