@@ -9,4 +9,4 @@ from Parser import *
 if __name__ == '__main__':
     while(True):
         equation = raw_input("Equation ")
-        print(showTree(parse(equation)))
+        print(parse(equation).show())
