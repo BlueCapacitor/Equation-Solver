@@ -1,7 +1,7 @@
 '''
 Created on Oct 22, 2018
 
-@author: gosha
+@author: Gosha
 '''
 
 from Tree import *
@@ -9,16 +9,19 @@ from Tree import *
 
 def parse(eq):
     split_eq = fixSyntax(split(eq))
+    return(parseLoop(split_eq))
 
+
+def parseLoop(eq):
     if(len(eq) == 1):
-        if(strType(split_eq[0]) == "operation"):
-            raise SyntaxError(split_eq[0])
+        if(strType(eq[0]) == "operation"):
+            raise SyntaxError(eq[0])
         else:
-            return(tree(split_eq[0]))
+            return(tree(eq[0]))
     else:
-        split_ord_op = splitOrdOp(split_eq)
+        split_ord_op = splitOrdOp(eq)
         op = split_ord_op[1]
-        arguments = [parse(split_ord_op[0]), parse(split_ord_op[2])]
+        arguments = [parseLoop(split_ord_op[0]), parseLoop(split_ord_op[2])]
         return(tree(op, arguments))
 
 
@@ -59,7 +62,8 @@ def fixSyntax(eq):
     if(len(eq) <= 1):
         return(eq)
 
-    if(eq[0] == '-' and strType[eq[1]] == "number"):
+    if(eq[0] == '-' and
+       (strType(eq[1]) == "number")):
         eq[1] = 0 - eq[1]
         del eq[0]
 

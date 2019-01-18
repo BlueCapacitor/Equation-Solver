@@ -1,12 +1,12 @@
 '''
 Created on Nov 11, 2018
 
-@author: gosha
+@author: Gosha
 '''
 
 symbols = {"blank": [" "],
            "digit": ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'],
-           "operation": ['=', '^', '*', '/', '+', '-'],
+           "operation": ['^', '*', '/', '+', '-', '='],
            "decimal": ['.']}
 
 
@@ -32,7 +32,7 @@ def strType(s):
 
 
 class tree:
-    def __init__(self, node, arguments = []):
+    def __init__(self, node, arguments=[]):
         self.node = node
 
         if(strType(node) == "number"):
