@@ -22,7 +22,7 @@ class Test(unittest.TestCase):
             self.assertEqual(parse(eq).show(), str(float(eq)))
 
     def test_implicit_negative_number(self):
-        for n in ['-1', '-1.0', '-1.5', '- 1', '- 1.0', '- 1.5']:
+        for n in ['-1', '-1.0', '-1.5', '-1', '-1.0', '-1.5']:
             self.assertEqual(parse(n).show(), str(float(n)))
             eq = "1 + " + n
             self.assertEqual(parse(eq).show(), "+(1.0, " + str(float(n)) + ")")

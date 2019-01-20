@@ -7,10 +7,14 @@ Created on Nov 11, 2018
 symbols = {"blank": [" "],
            "digit": ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'],
            "operation": ['^', '*', '/', '+', '-', '='],
-           "decimal": ['.']}
+           "decimal": ['.'],
+           "parentheses": ['(', ')']}
 
 
 def strType(s):
+    if(type(s) == tree):
+        return("tree")
+
     if(s in symbols["blank"]):
         return("blank")
 
@@ -27,6 +31,9 @@ def strType(s):
 
     if(s in symbols["operation"]):
         return("operation")
+
+    if(s in symbols["parentheses"]):
+        return("parentheses")
 
     return("object")
 
