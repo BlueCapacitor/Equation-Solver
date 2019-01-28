@@ -23,9 +23,7 @@ def parenthesesLoop(eq):
 
 
 def parseLoop(eq):
-    print("original eq: " + str(eq))
     eq = cutRedundantPar(eq)
-    print("cut: " + str(eq))
 
     if(len(eq) == 1):
         if(strType(eq[0]) == "operation"):

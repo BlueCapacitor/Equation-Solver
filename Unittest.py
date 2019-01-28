@@ -4,7 +4,8 @@ Created on Nov 16, 2018
 @author: Gosha
 '''
 import unittest
-from Main import *
+from Parser import parse
+from Tree import tree
 
 
 class Test(unittest.TestCase):

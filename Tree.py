@@ -4,11 +4,7 @@ Created on Nov 11, 2018
 @author: Gosha
 '''
 
-symbols = {"blank": [" "],
-           "digit": ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'],
-           "operation": ['^', '*', '/', '+', '-', '='],
-           "decimal": ['.'],
-           "parentheses": ['(', ')']}
+from Define_Opperations import *
 
 
 def strType(s):
@@ -70,3 +66,17 @@ class tree:
             out = str(self.arguments[0])
 
         return(out)
+
+    def evaluate(self, varValues):
+        if(self.node_type == "constant"):
+            return(self.node)
+        elif(self.node_type == "variable"):
+            return(varValues[self.node])
+        else:
+            arg0 = self.arguments[0].evaluate(varValues)
+            arg1 = self.arguments[1].evaluate(varValues)
+
+            if(self.node == "="):
+                return(arg0 - arg1)
+            else:
+                return(opp_functions[self.node](arg0, arg1))
