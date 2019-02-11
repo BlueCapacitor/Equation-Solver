@@ -1,7 +1,7 @@
 '''
 Created on Jan 25, 2019
 
-@author: gosha
+@author: Gosha
 '''
 
 symbols = {"blank": [" "],
@@ -16,4 +16,5 @@ mult = lambda a, b: a * b
 div = lambda a, b: a / b
 exp = lambda a, b: a ** b
 
-opp_functions = {"^": exp, "*": mult, "/": div, "÷": div, "+": add, "-": sub}
+opp_functions = {"^": exp, "*": mult, "/": div, "÷": div, "+": add, "-": sub, "=": sub}
+ord_op = ['^', ['*', '/', '÷'], ['+', '-'], '=']

@@ -41,14 +41,21 @@ class tree:
         if(strType(node) == "number"):
             self.node_type = "constant"
             self.arguments = [node]
+            self.objects = []
 
         if(strType(node) == "object"):
             self.node_type = "variable"
             self.arguments = [node]
+            self.objects = [self.node]
 
         if(strType(node) == "operation"):
             self.node_type = "operation"
             self.arguments = arguments
+            self.objects = []
+            for argument in arguments:
+                for o in argument.objects:
+                    if(not(o in self.objects)):
+                        self.objects += o
 
     def show(self):
         out = ""

@@ -103,10 +103,14 @@ def fixSyntax(eq):
 
 
 def splitOrdOp(eq):
-    for op in (symbols["operation"][:: -1]):
-        if(op in eq):
-            i = eq.index(op)
-            return([eq[0: i], eq[i], eq[i + 1:]])
+    for ops in (ord_op[:: -1]):
+        maximum = 0
+        for op in ops:
+            if(op in eq and len(eq) - 1 - eq[::-1].index(op) > maximum):
+                maximum = len(eq) - 1 - eq[::-1].index(op)
+
+        if(maximum > 0):
+            return([eq[0: maximum], eq[maximum], eq[maximum + 1:]])
 
 
 def innerPar(eq):

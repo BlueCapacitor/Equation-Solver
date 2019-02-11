@@ -6,6 +6,7 @@ Created on Nov 16, 2018
 import unittest
 from Parser import parse
 from Tree import tree
+import os
 
 
 class Test(unittest.TestCase):
@@ -41,6 +42,9 @@ class Test(unittest.TestCase):
 
     def test_oops(self):
         self.assertEqual(parse("0 = 1 + 2 - 3 * 4 / 5 ^ 6").show(), "=(0.0, -(+(1.0, 2.0), /(*(3.0, 4.0), ^(5.0, 6.0))))")
+        self.assertEqual(parse("a - b * c + d").show(), "+(-(a, *(b, c)), d)")
+        self.assertEqual(parse("a * b / c ÷ d").show(), "÷(/(*(a, b), c), d)")
+        self.assertEqual(parse("a ÷ b / c * d").show(), "*(/(÷(a, b), c), d)")
 
 
 if __name__ == "__main__":

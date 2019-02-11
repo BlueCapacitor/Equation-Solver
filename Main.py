@@ -5,10 +5,20 @@ Created on Oct 22, 2018
 '''
 
 from Parser import parse
-from Newtons_Method import Newtons_Method
+from Numeric_Solver import NumSolver as Solver
+import Unittest
 
 if __name__ == '__main__':
     while(True):
+        do = input("Action: ")
+
         equation = input("Equation: ")
-        name = input("Var Name: ")
-        print(Newtons_Method(parse(equation), name))
+        if(do.lower() == "solve"):
+            print(Solver(parse(equation)).solve(debug=False))
+            continue
+
+        if(do.lower() == "parse"):
+            print(parse(equation).show())
+            continue
+
+        print("Command \"%s\" not recognized" % do)
