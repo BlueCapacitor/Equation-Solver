@@ -5,18 +5,18 @@ Created on Nov 16, 2018
 '''
 import unittest
 from Parser import parse
-from Tree import tree
+from Tree import Tree
 import os
 
 
 class Test(unittest.TestCase):
 
     def test_tree_show(self):
-        tree1 = tree(10.0)
+        tree1 = Tree(10.0)
         self.assertEqual(tree1.show(), "10.0")
-        tree2 = tree('a')
+        tree2 = Tree('a')
         self.assertEqual(tree2.show(), "a")
-        tree3 = tree('+', [tree1, tree2])
+        tree3 = Tree('+', [tree1, tree2])
         self.assertEqual(tree3.show(), "+(10.0, a)")
 
     def test_number(self):

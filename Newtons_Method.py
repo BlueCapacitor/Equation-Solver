@@ -21,8 +21,11 @@ def Newtons_Method(f, variable_name, accuracy=1000000, start=0, randRange=1, ran
         x = start + uniform(- randRange, randRange)
 
         for attempt in range(round(accuracy * attemptsMultiplier)):
-            fx = f.evaluate({variable_name: x})
-            dfx = Derivative(f, x, variable_name, accuracy)
+            try:
+                fx = f.evaluate({variable_name: x})
+                dfx = Derivative(f, x, variable_name, accuracy)
+            except ValueError:
+                break
 
             if(dfx != 0):
                 x -= fx / dfx

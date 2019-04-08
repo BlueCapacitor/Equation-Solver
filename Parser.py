@@ -4,7 +4,8 @@ Created on Oct 22, 2018
 @author: Gosha
 '''
 
-from Tree import *
+from Tree import Tree, strType
+from Define_Opperations import fixSymbols, ord_op
 
 
 def parse(eq):
@@ -28,15 +29,15 @@ def parseLoop(eq):
     if(len(eq) == 1):
         if(strType(eq[0]) == "operation"):
             raise SyntaxError(eq[0])
-        elif(strType(eq[0]) == "tree"):
+        elif(strType(eq[0]) == "Tree"):
             return(eq[0])
         else:
-            return(tree(eq[0]))
+            return(Tree(eq[0]))
     else:
         split_ord_op = splitOrdOp(eq)
         op = split_ord_op[1]
         arguments = [parseLoop(split_ord_op[0]), parseLoop(split_ord_op[2])]
-        return(tree(op, arguments))
+        return(Tree(op, arguments))
 
 
 def split(eq):
@@ -80,6 +81,16 @@ def fixSyntax(eq):
        (strType(eq[1]) == "number")):
         eq[1] = 0 - eq[1]
         del eq[0]
+
+    for key in fixSymbols.keys():
+        while(True):
+            for i in range(len(eq) - len(key) + 1):
+                if(eq[i: i + len(key)] == list(key)):
+                    eq[i] = fixSymbols[key]
+                    del(eq[i + 1: i + len(key)])
+                    break
+            else:
+                break
 
     while(True):
         for i in range(len(eq) - 1):

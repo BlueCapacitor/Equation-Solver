@@ -4,12 +4,12 @@ Created on Nov 11, 2018
 @author: Gosha
 '''
 
-from Define_Opperations import *
+from Define_Opperations import symbols, opp_functions
 
 
 def strType(s):
-    if(type(s) == tree):
-        return("tree")
+    if(type(s) == Tree):
+        return("Tree")
 
     if(s in symbols["blank"]):
         return("blank")
@@ -34,23 +34,24 @@ def strType(s):
     return("object")
 
 
-class tree:
-    def __init__(self, node, arguments=[]):
+class Tree:
+
+    def __init__(self, node, arguments = []):
         self.node = node
 
         if(strType(node) == "number"):
             self.node_type = "constant"
-            self.arguments = [node]
+            self.args = [node]
             self.objects = []
 
         if(strType(node) == "object"):
             self.node_type = "variable"
-            self.arguments = [node]
+            self.args = [node]
             self.objects = [self.node]
 
         if(strType(node) == "operation"):
             self.node_type = "operation"
-            self.arguments = arguments
+            self.args = arguments
             self.objects = []
             for argument in arguments:
                 for o in argument.objects:
@@ -61,7 +62,7 @@ class tree:
         out = ""
 
         if(self.node_type == "operation"):
-            args = [branch.show() for branch in self.arguments]
+            args = [branch.show() for branch in self.args]
 
             out += str(self.node) + '('
             out += str(args[0])
@@ -70,20 +71,29 @@ class tree:
                 out += ')'
 
         else:
-            out = str(self.arguments[0])
+            out = str(self.args[0])
 
         return(out)
 
-    def evaluate(self, varValues):
+    def evaluate(self, var_values):
         if(self.node_type == "constant"):
             return(self.node)
         elif(self.node_type == "variable"):
-            return(varValues[self.node])
+            return(var_values[self.node])
         else:
-            arg0 = self.arguments[0].evaluate(varValues)
-            arg1 = self.arguments[1].evaluate(varValues)
+            arg0 = self.args[0].evaluate(var_values)
+            arg1 = self.args[1].evaluate(var_values)
 
             if(self.node == "="):
                 return(arg0 - arg1)
             else:
                 return(opp_functions[self.node](arg0, arg1))
+
+    def simplify(self):
+        if(self.node_type == "operation"):
+            self.args[0].simplify()
+            self.args[1].simplify()
+
+            if(self.args[0].node_type == "constant" and self.args[1].node_type == "constant"):
+                self.node_type = "constant"
+                self.args = [opp_functions[self.node](self.args[0].args[0], self.args[1].args[0])]
