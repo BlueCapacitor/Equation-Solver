@@ -4,26 +4,26 @@ Created on Oct 22, 2018
 @author: Gosha
 '''
 
-from Tree import Tree, strType
 from Define_Opperations import fixSymbols, ord_op
+from Tree import Tree, strType
 
 
-def parse(eq):
+def parse(eq, into = Tree):
     split_eq = fixSyntax(split(eq))
-    return(parenthesesLoop(split_eq))
+    return(parenthesesLoop(split_eq, into = into))
 
 
-def parenthesesLoop(eq):
+def parenthesesLoop(eq, into = Tree):
     if(not(eq.__contains__('('))):
-        return(parseLoop(eq))
+        return(parseLoop(eq, into = into))
     else:
         r = innerPar(eq)
-        parsed_eq = parseLoop(eq[r[0]: r[1]])
+        parsed_eq = parseLoop(eq[r[0]: r[1]], into = into)
         insrt = eq[:r[0] - 1] + [parsed_eq] + eq[r[1] + 1:]
-        return(parenthesesLoop(insrt))
+        return(parenthesesLoop(insrt, into = into))
 
 
-def parseLoop(eq):
+def parseLoop(eq, into = Tree):
     eq = cutRedundantPar(eq)
 
     if(len(eq) == 1):
@@ -32,12 +32,12 @@ def parseLoop(eq):
         elif(strType(eq[0]) == "Tree"):
             return(eq[0])
         else:
-            return(Tree(eq[0]))
+            return(into(eq[0]))
     else:
         split_ord_op = splitOrdOp(eq)
         op = split_ord_op[1]
-        arguments = [parseLoop(split_ord_op[0]), parseLoop(split_ord_op[2])]
-        return(Tree(op, arguments))
+        arguments = [parseLoop(split_ord_op[0], into = into), parseLoop(split_ord_op[2], into = into)]
+        return(into(op, arguments))
 
 
 def split(eq):
@@ -114,7 +114,7 @@ def fixSyntax(eq):
 
 
 def splitOrdOp(eq):
-    for ops in (ord_op[:: -1]):
+    for ops in (ord_op[::-1]):
         maximum = 0
         for op in ops:
             if(op in eq and len(eq) - 1 - eq[::-1].index(op) > maximum):

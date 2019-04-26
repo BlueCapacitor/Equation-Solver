@@ -4,11 +4,11 @@ Created on Nov 11, 2018
 @author: Gosha
 '''
 
-from Define_Opperations import symbols, opp_functions
+from Define_Opperations import symbols, opp_functions, ord_op_numbers
 
 
 def strType(s):
-    if(type(s) == Tree):
+    if(issubclass(type(s), Tree)):
         return("Tree")
 
     if(s in symbols["blank"]):
@@ -58,17 +58,35 @@ class Tree:
                     if(not(o in self.objects)):
                         self.objects += o
 
-    def show(self):
+    def show(self, notation = "infix"):  # notations: prefix: =(x, 1), infix: x = 1, postfix: (x, 1)=
         out = ""
 
         if(self.node_type == "operation"):
-            args = [branch.show() for branch in self.args]
+            args = [branch.show(notation = notation) for branch in self.args]
 
-            out += str(self.node) + '('
-            out += str(args[0])
-            for arg in args[1:]:
-                out += ", " + str(arg)
-                out += ')'
+            if(not(notation == "infix")):
+                out += self.node + '(' if notation == "prefix" else '('
+                out += args[0]
+                for arg in args[1:]:
+                    out += ", " + arg
+                out += ')' + self.node if notation == "postfix" else ')'
+            else:
+                if(self.args[0].node_type == "operation"):
+                    leftpar = ord_op_numbers[self.node] > ord_op_numbers[self.args[0].node]
+                else:
+                    leftpar = False
+                if(self.args[1].node_type == "operation"):
+                    rightpar = ord_op_numbers[self.node] > ord_op_numbers[self.args[1].node]
+                else:
+                    rightpar = False
+
+                out += '(' if leftpar else ''
+                out += args[0]
+                out += ') ' if leftpar else ' '
+                out += self.node
+                out += ' (' if rightpar else ' '
+                out += args[1]
+                out += ')' if rightpar else ''
 
         else:
             out = str(self.args[0])
@@ -90,6 +108,8 @@ class Tree:
                 return(opp_functions[self.node](arg0, arg1))
 
     def simplify(self):
+        #  check for (1 + a) + 2 = 3 + a
+
         if(self.node_type == "operation"):
             self.args[0].simplify()
             self.args[1].simplify()
@@ -97,3 +117,6 @@ class Tree:
             if(self.args[0].node_type == "constant" and self.args[1].node_type == "constant"):
                 self.node_type = "constant"
                 self.args = [opp_functions[self.node](self.args[0].args[0], self.args[1].args[0])]
+
+    def __str__(self):
+        return(self.show())

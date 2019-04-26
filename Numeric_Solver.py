@@ -7,7 +7,7 @@ Created on Jan 25, 2019
 from Newtons_Method import Newtons_Method
 
 
-class NumSolver(object):
+class NumSolver:
     '''
     classdocs
     '''

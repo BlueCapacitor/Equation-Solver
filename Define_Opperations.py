@@ -25,8 +25,31 @@ sub = lambda a, b: a - b
 mult = lambda a, b: a * b
 div = lambda a, b: a / b
 exp = lambda a, b: a ** b
-lg = lambda a, b: log(a, b)
+lg = lambda a, b: log(b, a)
 root = lambda a, b: b ** (1 / a)
 
+revsub = lambda a, b: b - a
+revdiv = lambda a, b: b / a
+revlog = lambda a, b: log(a, b)
+revexp = lambda a, b: b ** a
+
 opp_functions = {'^': exp, '_': lg, '√': root, '*': mult, '/': div, '+': add, '-': sub, '=': sub}
+opp_symbols = {value: key for key, value in opp_functions.items()}
 ord_op = [['^', '_', '√'], ['*', '/'], ['+', '-'], '=']
+ord_op_numbers = {'^': 3, '_': 3, '√': 3, '*': 2, '/': 2, '+': 1, '-': 1, '=': 0}
+
+inverse = {add: (sub, sub), sub: (add, revsub), mult: (div, div), div: (mult, revdiv), exp: (root, revlog), lg: (root, revexp)}
+
+alphabet = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z']
+
+direct_rules = {"x = n": "n",
+                "a * x = n": "n / a",
+                "a * x + b = n": "(n - b) / a",
+                "a / x + b = n": "(n - b) * a"}
+
+
+class Base:
+
+    def p(self, requiredV, text):  # verbosity: 0: None, 1: Steps, 2: Explanation for steps, 3: Debug/inner workings
+        if(self.verbosity >= requiredV):
+            print(text)
