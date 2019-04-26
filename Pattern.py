@@ -23,7 +23,7 @@ class Pattern(Tree):
             if(not(tree.node_type == "operation")):
                 return(False)
 
-            #  later check recursively for + 0 or * 1 or - 0 or / 1
+            #  later check for + 0 or * 1 or - 0 or / 1
             a = self.args[0].matches(tree.args[0])
             b = self.args[1].matches(tree.args[1])
 
@@ -53,3 +53,6 @@ class Pattern(Tree):
                 d[var] = b[var]
 
             return(d)
+
+        if(self.node_type == "expression"):
+            return({self.node: tree.node} if self.args[0](tree.node) else False)

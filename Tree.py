@@ -4,7 +4,10 @@ Created on Nov 11, 2018
 @author: Gosha
 '''
 
-from Define_Opperations import symbols, opp_functions, ord_op_numbers
+from Define_Opperations import symbols, opp_functions, ord_op_numbers, expressions
+
+notation = "infix"
+integers = True
 
 
 def strType(s):
@@ -30,6 +33,9 @@ def strType(s):
 
     if(s in symbols["parentheses"]):
         return("parentheses")
+
+    if(s[0] == '$' and s[-1] == '$'):
+        return('expression')
 
     return("object")
 
@@ -58,11 +64,18 @@ class Tree:
                     if(not(o in self.objects)):
                         self.objects += o
 
-    def show(self, notation = "infix"):  # notations: prefix: =(x, 1), infix: x = 1, postfix: (x, 1)=
+        if(strType(node) == "expression"):
+            self.node_type = "expression"
+            self.args = [expressions[node]]
+            self.objects = []
+
+    def show(self):  # notations: prefix: =(x, 1), infix: x = 1, postfix: (x, 1)=
+        global notation, integers
+
         out = ""
 
         if(self.node_type == "operation"):
-            args = [branch.show(notation = notation) for branch in self.args]
+            args = [branch.show() for branch in self.args]
 
             if(not(notation == "infix")):
                 out += self.node + '(' if notation == "prefix" else '('
@@ -89,7 +102,10 @@ class Tree:
                 out += ')' if rightpar else ''
 
         else:
-            out = str(self.args[0])
+            if(integers and self.node_type == "constant" and self.args[0] == int(self.args[0])):
+                out = str(int(self.args[0]))
+            else:
+                out = str(self.args[0])
 
         return(out)
 

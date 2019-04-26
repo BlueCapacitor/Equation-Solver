@@ -25,16 +25,19 @@ class Solver(Base):
 
         result = self.directRules()
         if(result != None):
-            self.p(1, result)
             return(result)
         else:
+            self.p(2, "Attempting to solve numerically")
             solver = NumSolver(self.eq)
-            return(solver.solve)
+            return(solver.solve())
 
     def directRules(self):
-        for expresion, solution in direct_rules.items():
+        for expresion, solutions in direct_rules.items():
             pattern = parse(expresion, Pattern)
             fits = pattern.matches(self.eq)
             if(fits is not False):
-                self.p(2, "Apply %s => x = %s" % (expresion, solution))
-                return(parse(solution).evaluate(fits))
+                self.p(2, "Apply %s => x = %s" % (expresion, solutions))
+                return({parse(solution).evaluate(fits) for solution in list(solutions)})
+            else:
+                self.p(3, "Rule %s => x = %s does not apply" % (expresion, solutions))
+        self.p(2, "Failed to find applicable rules")

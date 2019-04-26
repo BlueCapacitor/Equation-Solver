@@ -93,6 +93,15 @@ def fixSyntax(eq):
                 break
 
     while(True):
+        if('$' in eq):
+            start = eq.index('$')
+            end = eq[start + 1:].index('$') + start + 1
+            eq[start] = ''.join(eq[start: end + 1])
+            del(eq[start + 1: end + 1])
+        else:
+            break
+
+    while(True):
         for i in range(len(eq) - 1):
             if((strType(eq[i]) == "number" and strType(eq[i + 1]) == "object") or (strType(eq[i]) == "object" and strType(eq[i + 1]) == "object")):
                 eq = eq[0: i + 1] + ["*"] + eq[i + 1: len(eq)]

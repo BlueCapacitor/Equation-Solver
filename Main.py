@@ -7,12 +7,12 @@ Created on Oct 22, 2018
 from Parser import parse
 from Pattern import Pattern
 from Solver import Solver as Solver
+from Tree import notation, integers
 
 if __name__ == '__main__':
 
     variables = {}
     action = ''
-    notation = "infix"
 
     while(True):
         action_input = input("Action: ").lower()
@@ -30,30 +30,44 @@ if __name__ == '__main__':
             notation = "postfix"
             continue
 
+        if(action == "\\"):
+            integers = True
+            continue
+
+        if(action == "."):
+            integers = True
+            continue
+
         equation = input("Equation: ")
+
         if(action[:5] == "solve"):
             if(len(action) > 6):
-                v = int(action[5])
+                v = int(action[6])
             else:
-                v = 2
-            if(v != 0):
-                Solver(parse(equation), verbosity = v).solve()
-            else:
-                print(Solver(parse(equation), verbosity = v).solve())
+                v = 1
+            print(Solver(parse(equation), verbosity = v).solve())
             continue
 
         if(action == "parse" or action == "show"):
-            print(parse(equation).show(notation = notation))
+            print(parse(equation).show())
             continue
 
         if(action == "eval" or action == "evaluate" or action == "find"):
-            print(parse(equation).evaluate(variables))
+            solution = parse(equation).evaluate(variables)
+            if(int(solution) == solution):
+                print(int(solution))
+            else:
+                print(solution)
             continue
 
         if(action == "set" or action == "var" or action == "variable" or action == "assign" or action == "="):
             name = input("variable name: ")
             variables[name] = parse(equation).evaluate(variables)
-            print("%s = %s" % (name, parse(equation).evaluate(variables)))
+
+            if(int(variables[name]) == variables[name]):
+                print("%s = %s" % (name, int(variables[name])))
+            else:
+                print("%s = %s" % (name, variables[name]))
             continue
 
         if(action[:3] == "sim"):

@@ -12,6 +12,10 @@ symbols = {"blank": [" "],
            "decimal": ['.'],
            "parentheses": ['(', ')']}
 
+expressions = {"$int$": lambda x: int(x) == x,
+               "$even$": lambda x: int(x / 2) == x / 2,
+               "$odd$": lambda x: int((x + 1) / 2) == (x + 1) / 2}
+
 fixSymbols = {"#pi": pi, '#π': pi,
               '#e': e,
               '#i': 1j,
@@ -45,7 +49,8 @@ alphabet = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n'
 direct_rules = {"x = n": "n",
                 "a * x = n": "n / a",
                 "a * x + b = n": "(n - b) / a",
-                "a / x + b = n": "(n - b) * a"}
+                "a / x + b = n": "(n - b) * a"
+                "x ^ e = n"}
 
 
 class Base:
