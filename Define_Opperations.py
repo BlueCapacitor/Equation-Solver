@@ -12,9 +12,9 @@ symbols = {"blank": [" "],
            "decimal": ['.'],
            "parentheses": ['(', ')']}
 
-expressions = {"$int$": lambda x: int(x) == x,
-               "$even$": lambda x: int(x / 2) == x / 2,
-               "$odd$": lambda x: int((x + 1) / 2) == (x + 1) / 2}
+expressions = {"int": lambda x: int(x) == x,
+               "even": lambda x: int(x / 2) == x / 2,
+               "odd": lambda x: int((x + 1) / 2) == (x + 1) / 2}
 
 fixSymbols = {"#pi": pi, '#π': pi,
               '#e': e,
@@ -46,11 +46,18 @@ inverse = {add: (sub, sub), sub: (add, revsub), mult: (div, div), div: (mult, re
 
 alphabet = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z']
 
-direct_rules = {"x = n": "n",
-                "a * x = n": "n / a",
-                "a * x + b = n": "(n - b) / a",
-                "a / x + b = n": "(n - b) * a"
-                "x ^ e = n"}
+# change to dictionary
+direct_rules = {("x = n", ("n")),
+                ("a * x = n", ("n / a")),
+                ("a * x + b = n", ("(n - b) / a")),
+                ("a / x + b = n", ("(n - b) * a")),
+                ("x ^ $odd-e$ = n", ("e √ n")),
+                ("x ^ $even-e$ = n", ("e √ n", "0 - e √ n")),  # modify later to give all complex results
+                ("a * x ^ 2 + b * x + c = n", ("(0 - b + 2 √ (b ^ 2 - 4 * a * (c - n))) / (2 * a)", "(0 - b - 2 √ (b ^ 2 - 4 * a * (c - n))) / (2 * a)"))}
+
+# special case = [operation, special case, on the left, on the right, result or 'x']
+# special_cases = [['+', 0, True, True, 'x']]
+special_cases = []
 
 
 class Base:

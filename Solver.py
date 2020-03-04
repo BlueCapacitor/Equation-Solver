@@ -17,26 +17,31 @@ class Solver(Base):
         self.verbosity = verbosity
         self.p(3, "Solver init complete")
 
-    def solve(self):
+    def solve(self, cap_time = False):
         self.p(3, "Solve started")
+        self.p(3, "Received equation %s" % str(self.eq))
         self.eq.simplify()
         self.p(2, "Simplify to:")
         self.p(1, self.eq)
 
         result = self.directRules()
         if(result != None):
-            return(result)
+            return((result, True))
         else:
             self.p(2, "Attempting to solve numerically")
             solver = NumSolver(self.eq)
-            return(solver.solve())
+            try:
+                solution = (solver.solve(cap_time = cap_time), False)
+            except(OverflowError):
+                return((None, False))
+            return(solution)
 
     def directRules(self):
-        for expresion, solutions in direct_rules.items():
+        for expresion, solutions in direct_rules:
             pattern = parse(expresion, Pattern)
             fits = pattern.matches(self.eq)
             if(fits is not False):
-                self.p(2, "Apply %s => x = %s" % (expresion, solutions))
+                self.p(2, "Apply %s => x = %s" % (expresion, " and ".join(solutions)))
                 return({parse(solution).evaluate(fits) for solution in list(solutions)})
             else:
                 self.p(3, "Rule %s => x = %s does not apply" % (expresion, solutions))

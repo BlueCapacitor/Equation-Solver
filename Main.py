@@ -6,8 +6,8 @@ Created on Oct 22, 2018
 
 from Parser import parse
 from Pattern import Pattern
-from Solver import Solver as Solver
-from Tree import notation, integers
+from Solver import Solver, NumSolver
+import Tree
 
 if __name__ == '__main__':
 
@@ -19,23 +19,28 @@ if __name__ == '__main__':
         action = action_input if(action_input != '') else action
 
         if(action == "<"):
-            notation = "prefix"
+            Tree.notation = "prefix"
             continue
 
         if(action == "*"):
-            notation = "infix"
+            Tree.notation = "infix"
             continue
 
         if(action == ">"):
-            notation = "postfix"
+            Tree.notation = "postfix"
             continue
 
         if(action == "\\"):
-            integers = True
+            Tree.integers = True
             continue
 
         if(action == "."):
-            integers = True
+            Tree.integers = False
+            continue
+
+        if(action == "format"):
+            print(Tree.notation + " notation")
+            print("integers on" if Tree.integers else "integers off")
             continue
 
         equation = input("Equation: ")
@@ -45,7 +50,29 @@ if __name__ == '__main__':
                 v = int(action[6])
             else:
                 v = 1
-            print(Solver(parse(equation), verbosity = v).solve())
+
+            if(len(action) > 8):
+                cap_time = float(action[8:])
+            else:
+                cap_time = False
+
+            solution = Solver(parse(equation), verbosity = v).solve(cap_time = cap_time)
+
+            if(solution[0] is None):
+                print("No solutions found by the numeric solver within the alloted time and reasonable bounds" if cap_time else "No solutions found by the numeric solver within reasonable bounds")
+                continue
+
+            if(type(solution[0]) in [set, list, tuple]):
+                print(" and ".join(map(lambda x: str(x), solution[0])))
+            else:
+                print(str(solution[0]))
+            if(not(solution[1])):
+                print("These solutions may be incomplete" if type(solution[0]) in [set, list, tuple] else "There may be other solutions")
+            continue
+
+        if(action == "numsolve"):
+            solver = NumSolver(parse(equation))
+            print(solver.solve())
             continue
 
         if(action == "parse" or action == "show"):

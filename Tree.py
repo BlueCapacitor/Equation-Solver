@@ -4,7 +4,7 @@ Created on Nov 11, 2018
 @author: Gosha
 '''
 
-from Define_Opperations import symbols, opp_functions, ord_op_numbers, expressions
+from Define_Opperations import symbols, opp_functions, ord_op_numbers, expressions, special_cases
 
 notation = "infix"
 integers = True
@@ -66,7 +66,9 @@ class Tree:
 
         if(strType(node) == "expression"):
             self.node_type = "expression"
-            self.args = [expressions[node]]
+            start = 1
+            dash = list(node).index('-')
+            self.args = [expressions[node[start: dash]]]
             self.objects = []
 
     def show(self):  # notations: prefix: =(x, 1), infix: x = 1, postfix: (x, 1)=
@@ -124,15 +126,78 @@ class Tree:
                 return(opp_functions[self.node](arg0, arg1))
 
     def simplify(self):
-        #  check for (1 + a) + 2 = 3 + a
+        return
+        while(True):
+            if(self.node_type == "operation"):
+                self.args[0].simplify()
+                self.args[1].simplify()
+
+                # check for + 0, * 1, etc. (only after modifying pattern to try + 0, * 1, etc.)
+                for case in special_cases:
+                    print(case)
+                    if(self.node == case[0]):
+                        if(case[2]):
+                            if(self.args[0].args[0] == case[1]):
+                                if(case[4] == 'x'):
+                                    self.set(self.args[1])
+                                else:
+                                    self.set(Tree(case[4]))
+                                    break
+                        if(case[3]):
+                            print(self.args[1], self.args[1].args)
+                            if(self.args[1].args[0] == case[1]):
+                                if(case[4] == 'x'):
+                                    self.set(self.args[0])
+                                else:
+                                    self.set(Tree(case[4]))
+                                    break
+                else:
+                    break
+            else:
+                break
 
         if(self.node_type == "operation"):
-            self.args[0].simplify()
-            self.args[1].simplify()
+            if(self.node in ['+', '*']):  # extend for - and /
+                if(self.args[1].node == self.node and self.args[1].args[0].node_type == "constant"):
+                    if(self.args[0].node == self.node):
+                        self.args[0].args[1], self.args[1].args[0] = self.args[1].args[0], self.args[0].args[1]
+                        self.args[0].simplify()
+                    else:
+                        self.args[0] = Tree(self.node, [self.args[0], self.args[1].args[0]])
+                        self.args[1] = self.args[1].args[1]
+                        self.args[0].simplify()
+
+                if(self.args[0].node == self.node and self.args[0].args[1].node_type == "variable"):
+                    self.args[1] = Tree(self.node, [self.args[1], self.args[0].args[1]])
+                    self.args[0] = self.args[0].args[0]
+                    self.args[1].simplify()
 
             if(self.args[0].node_type == "constant" and self.args[1].node_type == "constant"):
                 self.node_type = "constant"
                 self.args = [opp_functions[self.node](self.args[0].args[0], self.args[1].args[0])]
+                self.node = self.args[0]
+                self.objects = []
+
+            elif(self.args[1].node_type == "constant"):
+                self.args[0], self.args[1] = self.args[1], self.args[0]
+
+            # check for a + 2 * a = 3 * a
+
+            # check for same or compatable operation on both sides of =
+
+    def update(self, var_values):
+        if(self.node_type == "variable" and self.node in var_values):
+            self.set(var_values[self.node] if type(var_values[self.node]) == Tree else Tree(var_values[self.node]))
+
+        elif(self.node_type == "operation"):
+            arg0 = self.args[0].update(var_values)
+            arg1 = self.args[1].update(var_values)
+
+    def set(self, other):
+        self.node = other.node
+        self.node_type = other.node_type
+        self.args = other.args
+        self.objects = other.objects
 
     def __str__(self):
         return(self.show())

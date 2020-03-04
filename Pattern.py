@@ -4,6 +4,7 @@ Created on Apr 24, 2019
 @author: gosha
 '''
 
+from Parser import parse
 from Tree import Tree
 
 
@@ -23,7 +24,7 @@ class Pattern(Tree):
             if(not(tree.node_type == "operation")):
                 return(False)
 
-            #  later check for + 0 or * 1 or - 0 or / 1
+            # later check for + 0 or * 1 or - 0 or / 1
             a = self.args[0].matches(tree.args[0])
             b = self.args[1].matches(tree.args[1])
 
@@ -34,13 +35,11 @@ class Pattern(Tree):
                 if((a is False) or (b is False)):
                     return(False)
 
-            #  possibly try to deal with * 2 = / (1 / 2)
+            # possibly try to deal with * 2 = / (1 / 2)
 
-            #  check for a + b = a - (- b)
+            # check for a + num = a - (- num)
 
-            #  check for 1 + (2 + 3) = (1 + 2) + 3 (and with *) (probably in Tree simplify because only 1 variable)
-
-            #  maybe check for a - (b - c) = a - b + c
+            # maybe check for a - (b - c) = a - b + c
 
             if(self.node != tree.node):
                 return(False)
@@ -54,5 +53,51 @@ class Pattern(Tree):
 
             return(d)
 
-        if(self.node_type == "expression"):
-            return({self.node: tree.node} if self.args[0](tree.node) else False)
+        if(self.node_type == "expression" and tree.node_type == "constant"):
+            dash = list(self.node).index('-')
+            end = -1
+            return({self.node[dash + 1: end]: tree.node} if self.args[0](tree.node) else False)
+
+        return(False)
+
+    def specialCases(self):
+        if(self.node_type != "operation"):
+            return(dict())
+        else:
+            options = [{}]
+
+            if(self.args[0].node_type == "variable"):
+                if(self.node == '+'):
+                    options += [option + {self.args[0].node: 0} for option in options]
+                if(self.node == '-'):
+                    options += [option + {self.args[0].node: 0} for option in options]
+                if(self.node == '*'):
+                    options += [option + {self.args[0].node: 0} for option in options]
+                if(self.node == '^'):
+                    options += [option + {self.args[0].node: 0} for option in options]
+
+                if(self.node == '*'):
+                    options += [option + {self.args[0].node: 1} for option in options]
+                if(self.node == '^'):
+                    options += [option + {self.args[0].node: 1} for option in options]
+                if(self.node == '√'):
+                    options += [option + {self.args[0].node: 1} for option in options]
+
+            if(self.args[1].node_type == "variable"):
+                if(self.node == '+'):
+                    options += [option + {self.args[1].node: 0} for option in options]
+                if(self.node == '-'):
+                    options += [option + {self.args[1].node: 0} for option in options]
+                if(self.node == '-'):
+                    options += [option + {self.args[1].node: 0} for option in options]
+                if(self.node == '^'):
+                    options += [option + {self.args[1].node: 0} for option in options]
+                if(self.node == '√'):
+                    options += [option + {self.args[1].node: 0} for option in options]
+                if(self.node == '_'):
+                    options += [option + {self.args[1].node: 0} for option in options]
+
+                if(self.node == '*'):
+                    options += [option + {self.args[1].node: 1} for option in options]
+                if(self.node == '/'):
+                    options += [option + {self.args[1].node: 1} for option in options]
