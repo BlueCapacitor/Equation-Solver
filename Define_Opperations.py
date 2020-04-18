@@ -16,13 +16,32 @@ expressions = {"int": lambda x: int(x) == x,
                "even": lambda x: int(x / 2) == x / 2,
                "odd": lambda x: int((x + 1) / 2) == (x + 1) / 2}
 
-fixSymbols = {"#pi": pi, '#π': pi,
-              '#e': e,
-              '#i': 1j,
+fixSymbols = {"pi": pi, 'π': pi,
+              'e': e,
+              'i': 1j,
               '÷': '/', ':': '/',
               "log": '_', 'lg': '_',
               "rt": '√', "root": '√',
               "pow": '^', "exp": '^'}
+
+latexOperations = {'+': "{0}+{1}",
+                   '-': "{0}-{1}",
+                   '*': "{0}*{1}",
+                   '/': "\\frac{{{0}}}{{{1}}}",
+                   '^': "{{{0}}}^{{{1}}}",
+                   '_': "\log_{0}{{({1})}}",
+                   '√': "\sqrt[{0}]{{{1}}}",
+                   'ln': "\ln{{({0})}}"}
+fastLatexOperations = {'+': ['', '+', ''],
+                       '-': ['', '-', ''],
+                       '*': ['', '*', ''],
+                       '/': ["\\frac{", "}{", "}"],
+                       '^': ["{", "}^{", "}"],
+                       '_': ["\\log_{", "}{", "}"],
+                       '√': ["\\sqrt[", "]{", "}"],
+                       'ln': ["\\ln{", "}"]}
+
+numbersToSymbols = {round(e, 12): 'e', round(pi, 12): 'π'}
 
 add = lambda a, b: a + b
 sub = lambda a, b: a - b
@@ -40,7 +59,9 @@ revexp = lambda a, b: b ** a
 opp_functions = {'^': exp, '_': lg, '√': root, '*': mult, '/': div, '+': add, '-': sub, '=': sub}
 opp_symbols = {value: key for key, value in opp_functions.items()}
 ord_op = [['^', '_', '√'], ['*', '/'], ['+', '-'], '=']
+symetric_op = ['*', '+']
 ord_op_numbers = {'^': 3, '_': 3, '√': 3, '*': 2, '/': 2, '+': 1, '-': 1, '=': 0}
+op_costs = {'^': 3.6, '_': 5, '√': 3, '*': 3, '/': 3.5, '+': 4, '-': 4, '=': 0}
 
 inverse = {add: (sub, sub), sub: (add, revsub), mult: (div, div), div: (mult, revdiv), exp: (root, revlog), lg: (root, revexp)}
 
@@ -56,8 +77,10 @@ direct_rules = {("x = n", ("n")),
                 ("a * x ^ 2 + b * x + c = n", ("(0 - b + 2 √ (b ^ 2 - 4 * a * (c - n))) / (2 * a)", "(0 - b - 2 √ (b ^ 2 - 4 * a * (c - n))) / (2 * a)"))}
 
 # special case = [operation, special case, on the left, on the right, result or 'x']
-# special_cases = [['+', 0, True, True, 'x']]
-special_cases = []
+special_cases = [['+', 0, True, True, 'x'], ['-', 0, False, True, 'x'], ['*', 0, True, True, 0], ['*', 1, True, True, 'x'], ['^', 0, False, True, 1], ['^', 0, True, False, 0], ['^', 1, True, False, 1], ['^', 1, False, True, 'x'], ['/', 0, True, False, 0], ['-', '=', None, None, 0], ['/', '=', None, None, 1], ['_', '=', None, None, 1], ['_', 1, False, True, 0]]
+
+transpose = lambda ls: [[l[i] for l in ls] for i in range(len(ls))]
+merge = lambda ls, f: list(map(f, transpose(ls)))
 
 
 class Base:

@@ -77,6 +77,23 @@ def fixSyntax(eq):
     if(len(eq) <= 1):
         return(eq)
 
+    while(True):
+        for i in range(len(eq) - 3):
+            if(eq[i: i + 3] == ['l', 'n', '(']):
+                parcount = 1
+                for j in range(i + 3, len(eq)):
+                    if(eq[j] == '('):
+                        parcount += 1
+                    if(eq[j] == ')'):
+                        parcount -= 1
+                    if(parcount == 0):
+                        eq = eq[:i] + ['(', 'e', '_'] + eq[i + 2: j + 1] + [')'] + eq[j + 1:]
+                        break
+                else:
+                    raise Exception("Parentheses mismatch")
+        else:
+            break
+
     if(eq[0] == '-' and
        (strType(eq[1]) == "number")):
         eq[1] = 0 - eq[1]
@@ -111,9 +128,7 @@ def fixSyntax(eq):
 
     while(True):
         for i in range(len(eq) - 2):
-            if(strType(eq[i]) == "operation" and
-               eq[i + 1] == '-' and
-               strType(eq[i + 2]) == "number"):
+            if(strType(eq[i]) in ["operation", "parentheses"] and eq[i + 1] == '-' and strType(eq[i + 2]) == "number"):
                 eq = eq[0: i + 1] + [0 - eq[i + 2]] + eq[i + 3: len(eq)]
                 break
         else:

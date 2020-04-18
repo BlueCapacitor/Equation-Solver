@@ -4,13 +4,14 @@ Created on Apr 24, 2019
 @author: gosha
 '''
 
+from Define_Opperations import symetric_op
 from Parser import parse
 from Tree import Tree
 
 
 class Pattern(Tree):
 
-    def matches(self, tree):
+    def matches(self, tree):  # logically wrong (does not account for asymmetric functions)
         if(self.node_type == "constant"):
             return({} if tree.node_type == "constant" and tree.args[0] == self.args[0] else False)
 
@@ -101,3 +102,42 @@ class Pattern(Tree):
                     options += [option + {self.args[1].node: 1} for option in options]
                 if(self.node == '/'):
                     options += [option + {self.args[1].node: 1} for option in options]
+
+    def directMatch(self, eq):
+        if(self.node_type == "variable"):
+            if(eq.node_type == "operation"):
+                return({self.node: eq.copy()})
+
+            return({self.node: eq.node})
+        if(self.node_type == "constant"):
+            if(eq.node_type not in ["constant"]):
+                return(False)
+
+            return({} if closeEnough(self.node, eq.node) else False)
+
+        if(self.node_type == "operation"):
+            if(eq.node_type not in ["operation"] or self.node != eq.node):
+                return(False)
+
+            a, b = self.args[0].directMatch(eq.args[0]), self.args[1].directMatch(eq.args[1])
+
+            if(a is False or b is False):
+                return(False)
+
+            aKeys = a.keys()
+            bKeys = b.keys()
+
+            out = b
+
+            for var in aKeys:
+                if(var in bKeys):
+                    if(a[var].getHash() != b[var].getHash() if (issubclass(type(a[var]), Tree) and issubclass(type(b[var]), Tree)) else b[var] != a[var]):
+                        return(False)
+                else:
+                    out[var] = a[var]
+
+            return(out)
+
+
+def closeEnough(a, b):
+    return(abs(a - b) < 10 ** -12)
