@@ -156,7 +156,7 @@ class Tree:
 
         return(out)
 
-    def evaluate(self, var_values):
+    def evaluate(self, var_values = []):
         if(self.node_type == "constant"):
             return(self.node)
         elif(self.node_type == "variable"):
@@ -172,10 +172,13 @@ class Tree:
 
     def condense(self):
         if(self.node_type == "operation"):
-            self.args[0].condense()
-            self.args[1].condense()
+            if(not(self.args[0].condense() and self.args[1].condense())):
+                return(False)
             if(self.args[0].node_type == "constant" and self.args[1].node_type == "constant"):
+                if(self.node == '/' and self.args[1].node == 0):
+                    return(False)
                 self.set(Tree(opp_functions[self.node](self.args[0].args[0], self.args[1].args[0])))
+        return(True)
 
     def simplifyCopy(self, maxSteps = 200, maxCostRatio = 20):
         from Simplification import simplify

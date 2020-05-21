@@ -40,21 +40,37 @@ def sym1stDerivative(eq, respectTo = None, sim = True):
         der = lambda eq: sym1stDerivative(eq, respectTo = respectTo, sim = sim)
 
         if(eq.node == '+'):  # adition rule
-            out = (der(a) + der(b))
+            if(checkConstant(a, respectTo)):
+                out = (der(b))
+            elif(checkConstant(b, respectTo)):
+                out = (der(a))
+            else:
+                out = (der(a) + der(b))
+
         if(eq.node == '-'):  # subtraction rule
-            out = (der(a) - der(b))
+            if(checkConstant(a, respectTo)):
+                out = (Tree(0) - der(b))
+            elif(checkConstant(b, respectTo)):
+                out = (der(a))
+            else:
+                out = (der(a) - der(b))
+
         if(eq.node == '*'):
             if(checkConstant(a, respectTo)):
                 out = (a * der(b))
-            if(checkConstant(b, respectTo)):
+            elif(checkConstant(b, respectTo)):
                 out = (b * der(a))
             else:
                 out = (der(a) * b + der(b) * a)
+
         if(eq.node == '/'):
             if(checkConstant(b, respectTo)):
                 out = (der(a) / b)
+            elif(checkConstant(a, respectTo)):
+                out = (Tree(0) - der(b) / (b ** Tree(2)))
             else:
                 out = ((der(a) * b - der(b) * a) / (b ** Tree(2)))
+
         if(eq.node == '^'):
             if(checkConstant(a, respectTo)):
                 out = (eq * Tree('_', [Tree(e), a]) * der(b))
@@ -62,11 +78,13 @@ def sym1stDerivative(eq, respectTo = None, sim = True):
                 out = (b * a ** (b - Tree(1)) * der(a))
             else:
                 out = (a ** b * (der(b) * Tree('_', [Tree(e), a]) + der(a) * b / a))
+
         if(eq.node == '_'):
             if(checkConstant(a, respectTo)):
                 out = (der(b) / (b * Tree('_', [Tree(e), a])))
             else:
                 out = (der(Tree('_', [Tree(e), b]) / Tree('_', [Tree(e), a])))
+
         if(eq.node == '√'):
             out = (der(b ** (Tree(1) / a)))
 

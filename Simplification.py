@@ -3,8 +3,10 @@ Created on Mar 21, 2020
 
 @author: gosha
 '''
+import copy
 import heapq
 
+from Define_Opperations import rec, binEncode
 from Parser import parse
 from Pattern import Pattern
 from Tree import Tree
@@ -56,20 +58,48 @@ class Rule:
 
 class HashBank():
 
-    def __init__(self):
-        self.hashes = []
+    def __init__(self, depth = 50):
+        self.depth = depth
+        self.hashes = copy.deepcopy(rec([], lambda x: [x] * 2, depth))
 
-    def addHash(self, h):
-        self.hashes.append(h)
+    def addHash(self, h, inList = None):
+        if(type(h) == int):
+            h = binEncode(h, self.depth)
 
-    def checkForHash(self, h):
-        return(h in self.hashes)
+        if(inList == None):
+            inList = self.hashes
 
-    def checkAndAdd(self, h):
-        if(h not in self.hashes):
-            self.hashes.append(h)
-            return(False)
-        return(True)
+        if(len(inList) == 0 or type(inList[0]) != list):
+            inList.append(h)
+        else:
+            self.addHash(h, inList[int(h[0])])
+
+    def checkForHash(self, h, inList = None):
+        if(type(h) == int):
+            h = binEncode(h, self.depth)
+
+        if(inList == None):
+            inList = self.hashes
+
+        if(len(inList) == 0 or type(inList[0]) != list):
+            return(h in inList)
+        else:
+            return(self.checkForHash(h, inList[int(h[0])]))
+
+    def checkAndAdd(self, h, inList = None):
+        if(type(h) == int):
+            h = binEncode(h, self.depth)
+
+        if(inList == None):
+            inList = self.hashes
+
+        if(len(inList) == 0 or type(inList[0]) != list):
+            if(h not in inList):
+                inList.append(h)
+                return(False)
+            return(True)
+        else:
+            return(self.checkAndAdd(h, inList[int(h[0])]))
 
 
 class PriorityQueue():
@@ -93,7 +123,7 @@ class PriorityQueue():
         return(self.heap[0])
 
 
-def simplify(eq, maxSteps = 200, maxCostRatio = 20):
+def simplify(eq, maxSteps = 200, maxCostRatio = 2):
     best = eq.copy()
     best.condense()
     bestCost = eq.getCost()
@@ -104,15 +134,13 @@ def simplify(eq, maxSteps = 200, maxCostRatio = 20):
 
     step = 0
     while(not(queue.isEmpty()) and (maxSteps == None or step < maxSteps)):
-        print(queue.getMin()[2])
         options = applyAllRules(queue.pop()[2])
         for option in options:
-            option.condense()
+            if(not(option.condense())):
+                continue
             cost = option.getCost()
             if(not(hashes.checkAndAdd(option.getHash())) and (maxCostRatio == None or cost < tuple(map(lambda i: i * maxCostRatio, bestCost)))):
-                print('\t' + str(option))
                 if(cost < bestCost):
-                    print('^' * 10)
                     best = option
                     bestCost = cost
                 queue.push((option.getCost(), option.getHash(), option))
