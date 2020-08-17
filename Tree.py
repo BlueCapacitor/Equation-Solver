@@ -79,14 +79,14 @@ class Tree:
     def updateObjects(self):
         if(self.node_type == "constant"):
             self.objects = []
-        if(self.node_type == "object"):
+        if(self.node_type == "variable"):
             self.objects = [self.node]
         if(self.node_type == "operation"):
             self.objects = []
             for argument in self.args:
                 for o in argument.objects:
                     if(not(o in self.objects)):
-                        self.objects += o
+                        self.objects.append(o)
         if(self.node_type == "expression"):
             self.objects = []
 

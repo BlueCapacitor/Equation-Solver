@@ -234,6 +234,36 @@ class UIArgument():
 
             self.get = lambda: self.UIObject.turtleCanvases[int(self.interface.get())]
 
+        if(self.argType == "color"):
+            self.interface = tk.Frame(UIObject.mainFrame)
+            self.interface.grid(row = row, column = 1)
+
+            self.colorEntries = {}
+
+            for i in range(3):
+                c = ['R', 'G', 'B'][i]
+
+                def validate(value):
+                    if(value in ['']):
+                        return(True)
+
+                    try:
+                        float(value)
+                        return(float(value) >= 0 and float(value) <= 1)
+
+                    except Exception:
+                        return(False)
+
+                reg = UIObject.window.register(validate)
+                self.colorEntries[c] = tk.Entry(self.interface, validate = "key", validatecommand = (reg, '%P'))
+
+                if(self.default != None):
+                    self.colorEntries[c].insert(tk.END, str(self.default[i]))
+
+                self.colorEntries[c].grid(row = 0, column = i)
+
+            self.get = lambda: [float(self.colorEntries[c].get()) for c in ['R', 'G', 'B']]
+
     def delete(self):
         self.label.destroy()
         self.interface.destroy()

@@ -4,16 +4,7 @@ Created on Oct 22, 2018
 @author: Gosha
 '''
 
-import os
-
-import clipboard
-
-import Actions
-from Graph import Graph
-from TK_Turtle_Canvas import TurtleCanvas
-import Tree
-from UI import UI, UIArgument
-import tkinter as tk
+from UI import UI
 
 if __name__ == '__main__':
     UIObject = UI()

@@ -7,6 +7,7 @@ Created on Apr 19, 2020
 import functools
 import os
 
+from Aditional_Math import cplxRound
 from Graph import Graph
 from Pattern import Pattern
 from Simplification import simplify
@@ -47,13 +48,27 @@ def requestArguments(category, requestedArguments, outputType = None):
             elif(wrapper.outputType == float):
                 setOutputText(func(*inputArguments))
 
+            elif(wrapper.outputType == complex):
+                out = func(*inputArguments)
+                if(out == out.real):
+                    setOutputText(out.real)
+                elif(out == out.imag * 1j):
+                    setOutputText("%s * i" % (out.imag))
+                elif(out.imag > 0):
+                    setOutputText("%s + %s * i" % (out.real, out.imag))
+                elif(out.imag < 0):
+                    setOutputText("%s - %s * i" % (out.real, 0 - out.imag))
+
             elif(wrapper.outputType in [Tree, Pattern]):
                 setOutputText(displayEquation(func(*inputArguments)))
 
         wrapper.requestedArguments = requestedArguments
         wrapper.outputType = outputType
-        actions[func.__name__[2:]] = wrapper
-        categories[category].append(func.__name__[2:])
+
+        name = ' '.join((func.__name__[2:]).split('_'))
+
+        actions[name] = wrapper
+        categories[category].append(name)
         return(wrapper)
 
     return(requestArgumentsDecorator)
@@ -85,9 +100,9 @@ def UIParse(eq):
     return(eq)
 
 
-@requestArguments("Symbolic math", [("Equation: ", Tree)], float)
-def UIEval(eq):
-    return(eq.evaluate())
+@requestArguments("Symbolic math", [("Equation: ", Tree), ("Round To: ", int, 4)], complex)
+def UIEval(eq, roundTo):
+    return(cplxRound(eq.evaluate(), roundTo))
 
 
 @requestArguments("Symbolic math", [("Equation: ", Tree)], float)
@@ -111,29 +126,60 @@ def UISimplify(eq, maxSteps, maxCostRatio):
     return(simplify(eq, maxSteps = maxSteps, maxCostRatio = maxCostRatio))
 
 
-@requestArguments("Graphing", [("Graph ID: ", Graph)], None)
+@requestArguments("Symbolic math", [("Equation: ", Tree)], str)
+def UIGetObjects(eq):
+    return(str(eq.objects))
+
+# ══════════════════════════════════════════════════
+
+
+@requestArguments("Graphing", [("Graph ID: ", Graph, 0)], None)
 def UIRedraw(graph):
     graph.draw()
 
 
-@requestArguments("Graphing", [("Graph ID: ", Graph)], None)
+@requestArguments("Graphing", [("Graph ID: ", Graph, 0)], None)
 def UIReset(graph):
     graph.clear()
 
 
-@requestArguments("Graphing", [("Graph ID: ", Graph)], None)
-def UIBind_Movements(graph):
-    graph.bindMovements()
-    graph.drawCommands.append(graph.bindMovements)
+@requestArguments("Graphing", [("Color: ", "color", (0, 0, 0)), ("Graph ID: ", Graph, 0)], None)
+def UIDraw_Axies(color, graph):
+    graph.drawAxies(color = color)
+    graph.drawCommands.append(lambda: graph.drawAxies(color = color))
 
 
-@requestArguments("Graphing", [("Graph ID: ", Graph)], None)
-def UIDraw_Axies(graph):  # later implement a color picker
-    graph.drawAxies()
-    graph.drawCommands.append(graph.drawAxies)
+@requestArguments("Graphing", [("y(x): ", Tree), ("Color: ", "color", (0, 0, 1)), ("Graph ID: ", Graph, 0)], None)
+def UIPlot(eq, color, graph):
+    graph.plot(eq, color = color)
+    graph.drawCommands.append(lambda: graph.plot(eq, color = color))
 
 
-@requestArguments("Graphing", [("Equation: ", Tree), ("Graph ID: ", Graph)], None)
-def UIPlot(eq, graph):  # later implement a color picker
-    graph.plot(eq)
-    graph.drawCommands.append(lambda: graph.plot(eq))
+@requestArguments("Graphing", [("r(θ): ", Tree), ("From: ", float, -100), ("To: ", float, 100), ("Color: ", "color", (1, 0, 1)), ("Graph ID: ", Graph, 0)], None)
+def UIPlot_Polar(eq, fromT, toT, color, graph):
+    graph.plotPolar(eq, tRange = (fromT, toT), color = color)
+    graph.drawCommands.append(lambda: graph.plotPolar(eq, tRange = (fromT, toT), color = color))
+
+
+@requestArguments("Graphing", [("x(t): ", Tree), ("y(t): ", Tree), ("From: ", float, -100), ("To: ", float, 100), ("Color: ", "color", (1, 0, 0)), ("Graph ID: ", Graph, 0)], None)
+def UIPlot_Parametric(eqX, eqY, fromT, toT, color, graph):
+    graph.plotParametric([eqX, eqY], tRange = (fromT, toT), color = color)
+    graph.drawCommands.append(lambda: graph.plotParametric([eqX, eqY], tRange = (fromT, toT), color = color))
+
+
+@requestArguments("Graphing", [("dy/dx: ", Tree), ("Error » Undef: ", bool, True), ("Color: ", "color", (0, 1, 1)), ("Graph ID: ", Graph, 0)], None)
+def UIPlot_Slope_Field(slopeFunc, errorAction, color, graph):
+    graph.drawSlopeFeild(slopeFunc, color = color, treatExceptionsAsUndefined = errorAction)
+    graph.drawCommands.append(lambda: graph.drawSlopeFeild(slopeFunc, color = color, treatExceptionsAsUndefined = errorAction))
+
+
+@requestArguments("Graphing", [("dy/dx: ", Tree), ("Initial x: ", float, 0), ("Initial y: ", float, 0), ("Color: ", "color", (1, 0, 0)), ("Graph ID: ", Graph, 0)], None)
+def UISolve_Slope_Field(slopeFunc, xi, yi, color, graph):
+    graph.solveSlopeFeild(slopeFunc, xi, yi, color = color)
+    graph.drawCommands.append(lambda: graph.solveSlopeFeild(slopeFunc, xi, yi, color = color))
+
+
+@requestArguments("Graphing", [("X: ", float, 0), ("Y: ", float, 0), ("Color: ", "color", (1, 0, 1)), ("Graph ID: ", Graph, 0)], None)
+def UIPlot_Point(x, y, color, graph):
+    graph.plotPoint((x, y), color = color)
+    graph.drawCommands.append(lambda: graph.plotPoint((x, y), color = color))

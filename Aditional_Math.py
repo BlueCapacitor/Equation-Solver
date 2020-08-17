@@ -73,13 +73,43 @@ def gradDis(f, xi, dx = 10 ** (-2.81), acceptedSlope = 0.0001):
 
 
 def equationToFunction(eq):
-    if(len(eq.objects) == 0):
-        return(lambda: eq.evaluate())
-    elif(len(eq.objects) == 1):
-        return(lambda val: eq.evaluate(list(val.items) if type(val) == dict else guessVarMapping(eq, val)))
-    else:
-        return(lambda **varValues: eq.evaluate(varValues))
+
+    def function(value = None, **kwargs):
+        if(value != None):
+            return(eq.evaluate(guessVarMapping(eq, value)))
+        else:
+            return(eq.evaluate(kwargs))
+
+    return(function)
 
 
 def guessVarMapping(eq, value):
-    return({eq.objects[0]: value})
+    if(len(eq.objects) > 0):
+        return({eq.objects[0]: value})
+    else:
+        return({})
+
+
+def cplxRound(x, d = 0):
+    if(round(x.imag, d) == 0):
+        return(round(x.real, d) if d != 0 else round(x.real))
+    if(round(x.real, d) == 0):
+        return(round(x.imag, d) * 1j if d != 0 else round(x.imag) * 1j)
+    return(round(x, d) + round(x.imag, d) * 1j if d != 0 else round(x) + round(x.imag) * 1j)
+
+
+def findNiceNumber(n):
+    options = [1, 2, 5, 10]
+    best = None
+    bestScore = 0
+    b = 10 ** floor(log10(n))
+    for m in options:
+        attempt = m * b
+        if(attempt == n):
+            return(attempt)
+        score = 1 / abs(n - attempt)
+        if(score > bestScore):
+            best = attempt
+            bestScore = score
+
+    return(best)
