@@ -4,23 +4,18 @@ Created on Feb 29, 2020
 @author: Gosha
 '''
 
-from random import random
-import threading
-from time import sleep
-import traceback
-
-from Aditional_Math import *
-from TK_Turtle_Canvas import TurtleCanvas
-from Tree import Tree
+from Core.tree import Tree
+from Math.aditionalMath import *
+from TurtleCanvas.tKTurtleCanvas import TurtleCanvas
 
 
 class Graph(TurtleCanvas):
 
-    def __init__(self, TCid):
+    def __init__(self, windowID):
         buttons = {"Redraw": self.draw, "Clear": self.clear, "Undo": self.undo}
 
-        super().__init__(TCid, buttons = buttons)
-        self.window.title("Graph | id: %s" % (self.TCid))
+        super().__init__(windowID, buttons = buttons)
+        self.window.title("Graph | id: %s" % (self.windowID))
 
         self.Xmin = -10
         self.Xmax = 10
@@ -51,7 +46,7 @@ class Graph(TurtleCanvas):
 
             command = self.drawCommands[i]
 
-            self.window.title("Graph | id: %s | %s%%" % (self.TCid, round(100 * i / len(self.drawCommands))))
+            self.window.title("Graph | id: %s | %s%%" % (self.windowID, round(100 * i / len(self.drawCommands))))
 
             command()
             self.update()
@@ -59,7 +54,7 @@ class Graph(TurtleCanvas):
             if(self.lastDrawID > drawID):
                 return
 
-        self.window.title("Graph | id: %s" % (self.TCid))
+        self.window.title("Graph | id: %s" % (self.windowID))
 
     def undo(self):
         if(len(self.drawCommands) > 0):

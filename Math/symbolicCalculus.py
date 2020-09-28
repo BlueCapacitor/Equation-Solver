@@ -6,13 +6,13 @@ Created on Mar 17, 2020
 
 from math import e
 
-from Tree import Tree
+from tree import Tree
 
 
 def checkConstant(eq, respectTo = None):
     if(respectTo == None):
-        return(len(eq.objects) == 0)
-    return(respectTo not in eq.objects)
+        return(len(eq.surfaces) == 0)
+    return(respectTo not in eq.surfaces)
 
 
 def sym1stDerivative(eq, respectTo = None, sim = True):
@@ -20,9 +20,9 @@ def sym1stDerivative(eq, respectTo = None, sim = True):
         eq.simplify(maxSteps = 8 * eq.getCost()[0])
 
     if(respectTo == None):
-        if(len(eq.objects) == 1):
-            respectTo = eq.objects[0]
-        elif(len(eq.objects) > 1):
+        if(len(eq.surfaces) == 1):
+            respectTo = eq.surfaces[0]
+        elif(len(eq.surfaces) > 1):
             raise Exception("ambiguous variable of derivation: ")
 
     if(checkConstant(eq, respectTo)):  # constant rule

@@ -84,8 +84,8 @@ def equationToFunction(eq):
 
 
 def guessVarMapping(eq, value):
-    if(len(eq.objects) > 0):
-        return({eq.objects[0]: value})
+    if(len(eq.surfaces) > 0):
+        return({eq.surfaces[0]: value})
     else:
         return({})
 

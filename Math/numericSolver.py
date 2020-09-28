@@ -6,7 +6,7 @@ Created on Jan 25, 2019
 
 from time import time
 
-from Newtons_Method import Newtons_Method
+from Math.newtonsMethod import Newtons_Method
 
 
 class NumSolver:
@@ -19,7 +19,7 @@ class NumSolver:
 
     def solve(self, accuracy = 1000000, start = 0, randRange = 1, randRangeExp = 1.1, attemptsMultiplier = 0.01, debug = False, defined_vars = [], cap_time = False):
         defined_vars = list(defined_vars)
-        variables = self.eq.objects
+        variables = self.eq.surfaces
         undefined_vars = []
         for v in variables:
             if(not(v in defined_vars)):

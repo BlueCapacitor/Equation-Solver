@@ -4,7 +4,7 @@ Created on Oct 22, 2018
 @author: Gosha
 '''
 
-from UI import UI
+from UI.ui import UI
 
 if __name__ == '__main__':
     UIObject = UI()
@@ -25,50 +25,50 @@ if __name__ == '__main__':
 #             continue
 #
 #         if(action in ["<", "prefix"]):
-#             Tree.notation = "prefix"
+#             tree.notation = "prefix"
 #             continue
 #
 #         if(action in ["*", "infix"]):
-#             Tree.notation = "infix"
+#             tree.notation = "infix"
 #             continue
 #
 #         if(action in [">", "postfix"]):
-#             Tree.notation = "postfix"
+#             tree.notation = "postfix"
 #             continue
 #
 #         if(action in ["#l", "latex"]):
-#             Tree.notation = "latex"
+#             tree.notation = "latex"
 #             latexMode = "pure LaTeX"
 #             continue
 #
 #         if(action in ["#h", "html"]):
-#             Tree.notation = "latex"
+#             tree.notation = "latex"
 #             latexMode = "html"
 #             continue
 #
 #         if(action == "\\"):
-#             Tree.integers = True
+#             tree.integers = True
 #             continue
 #
 #         if(action == "."):
-#             Tree.integers = False
+#             tree.integers = False
 #             continue
 #
 #         if(action == "f0"):
-#             Tree.stringFormat = 0
+#             tree.stringFormat = 0
 #             continue
 #
 #         if(action == "f1"):
-#             Tree.stringFormat = 1
+#             tree.stringFormat = 1
 #             continue
 #
 #         if(action == "f2"):
-#             Tree.stringFormat = 2
+#             tree.stringFormat = 2
 #             continue
 #
 #         if(action == "format"):
-#             print(Tree.notation + " notation")
-#             print("integers on" if Tree.integers else "integers off")
+#             print(tree.notation + " notation")
+#             print("integers on" if tree.integers else "integers off")
 #             continue
 #
 #         if(action == "lock"):
@@ -89,7 +89,7 @@ if __name__ == '__main__':
 #             else:
 #                 cap_time = False
 #
-#             solution = Solver(parse(equation), verbosity = v).solve(cap_time = cap_time)
+#             solution = solver(parse(equation), verbosity = v).solve(cap_time = cap_time)
 #
 #             if(solution[0] is None):
 #                 print("No solutions found by the numeric solver within the alloted time and reasonable bounds" if cap_time else "No solutions found by the numeric solver within reasonable bounds")
@@ -138,13 +138,13 @@ if __name__ == '__main__':
 #
 #         if(action == "fit"):
 #             eq = parse(equation)
-#             pattern = parse(input("Pattern: "), Pattern)
+#             pattern = parse(input("pattern: "), pattern)
 #             displayEquation(pattern.matches(eq))
 #             continue
 #
 #         if(action == "dfit"):
 #             eq = parse(equation)
-#             pattern = parse(input("Pattern: "), Pattern)
+#             pattern = parse(input("pattern: "), pattern)
 #             match = pattern.directMatch(eq)
 #             if(type(match) == dict):
 #                 print(dict(map(lambda item: (item[0], str(item[1])), match.items())))

@@ -6,22 +6,22 @@ Created on May 20, 2020
 
 import turtle
 
-from Aditional_Math import *
+from Math.aditionalMath import *
 import tkinter as tk
 
 
 class TurtleCanvas(object):
 
-    def __init__(self, TCid, buttons = []):
-        self.TCid = TCid
+    def __init__(self, windowID, buttons = []):
+        self.windowID = windowID
 
         self.window = tk.Tk()
-        self.window.title("Turtle Canvas | id: " + str(TCid))
+        self.window.title("Turtle Canvas | id: " + str(windowID))
 
         self.frame = tk.Frame(self.window, bg = "Black")
         self.frame.pack(expand = True, fill = tk.BOTH)
 
-        self.idLabel = tk.Label(self.frame, text = "id: " + str(TCid))
+        self.idLabel = tk.Label(self.frame, text = "id: " + str(windowID))
         self.idLabel.grid(row = 0, column = 0, sticky = tk.NSEW, padx = 4, pady = (4, 2))
 
         self.canvas = tk.Canvas(self.frame)
