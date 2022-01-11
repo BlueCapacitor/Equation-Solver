@@ -6,10 +6,10 @@ Created on Mar 21, 2020
 import copy
 import heapq
 
-from defineOpperations import rec, binEncode
-from equationParser import parse
-from pattern import Pattern
-from tree import Tree
+from Core.defineOpperations import rec, binEncode
+from Core.equationParser import parse
+from Core.pattern import Pattern
+from Core.tree import Tree
 
 rules = []
 

@@ -4,8 +4,8 @@ Created on Oct 22, 2018
 @author: Gosha
 '''
 
-from defineOpperations import fixSymbols, ord_op
-from tree import Tree, strType
+from Core.defineOpperations import fixSymbols, ord_op
+from Core.tree import Tree, strType
 
 
 def parse(eq, into = Tree):

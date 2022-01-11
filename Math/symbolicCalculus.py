@@ -6,7 +6,7 @@ Created on Mar 17, 2020
 
 from math import e
 
-from tree import Tree
+from Core.tree import Tree
 
 
 def checkConstant(eq, respectTo = None):

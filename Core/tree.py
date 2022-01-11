@@ -4,7 +4,7 @@ Created on Nov 11, 2018
 @author: Gosha
 '''
 
-from defineOpperations import symbols, opp_functions, ord_op_numbers, expressions, special_cases, \
+from Core.defineOpperations import symbols, opp_functions, ord_op_numbers, expressions, special_cases, \
     symetric_op, numbersToSymbols, fastLatexOperations, op_costs
 
 notation = "infix"
@@ -184,11 +184,11 @@ class Tree():
         return(True)
 
     def simplifyCopy(self, maxSteps = 200, maxCostRatio = 20):
-        from simplification import simplify
+        from Math.simplification import simplify
         return(simplify(self, maxSteps = maxSteps, maxCostRatio = maxCostRatio))
 
     def simplify(self, maxSteps = 200, maxCostRatio = 20):
-        from simplification import simplify
+        from Math.simplification import simplify
         self.set(simplify(self, maxSteps = maxSteps, maxCostRatio = maxCostRatio))
 
     def oldSimplify(self, timeout = 100):
