@@ -4,10 +4,10 @@ Created on Jan 25, 2019
 @author: Gosha
 '''
 
-from Define_Opperations import direct_rules, Base
-from Numeric_Solver import NumSolver
-from Parser import parse
-from Pattern import Pattern
+from Core.defineOpperations import direct_rules, Base
+from Core.equationParser import parse
+from Core.pattern import Pattern
+from Math.numericSolver import NumSolver
 
 
 class Solver(Base):

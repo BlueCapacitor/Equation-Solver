@@ -33,7 +33,6 @@ def Newtons_Method(f, variable_name, accuracy = 1000000, start = 0, randRange = 
                 break
 
             if(abs(fx) <= 1 / accuracy):
-                print(x)
                 if(abs(f.evaluate({variable_name: round(x, round(log10(accuracy) / 2))})) <= 1 / accuracy):
                     return(round(x, round(log10(accuracy) / 2)))
                 else:

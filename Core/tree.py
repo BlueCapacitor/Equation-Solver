@@ -4,7 +4,7 @@ Created on Nov 11, 2018
 @author: Gosha
 '''
 
-from Define_Opperations import symbols, opp_functions, ord_op_numbers, expressions, special_cases, \
+from Core.defineOpperations import symbols, opp_functions, ord_op_numbers, expressions, special_cases, \
     symetric_op, numbersToSymbols, fastLatexOperations, op_costs
 
 notation = "infix"
@@ -42,7 +42,7 @@ def strType(s):
     return("object")
 
 
-class Tree:
+class Tree():
 
     def __init__(self, node, arguments = []):
         if(node == None):
@@ -53,42 +53,45 @@ class Tree:
         if(strType(node) == "number"):
             self.node_type = "constant"
             self.args = [node]
-            self.objects = []
+            self.surfaces = []
 
         if(strType(node) == "object"):
             self.node_type = "variable"
             self.args = [node]
-            self.objects = [self.node]
+            self.surfaces = [self.node]
 
         if(strType(node) == "operation"):
             self.node_type = "operation"
             self.args = arguments
-            self.objects = []
+            self.surfaces = []
             for argument in arguments:
-                for o in argument.objects:
-                    if(not(o in self.objects)):
-                        self.objects += o
+                for o in argument.surfaces:
+                    if(not(o in self.surfaces)):
+                        self.surfaces += o
 
         if(strType(node) == "expression"):
             self.node_type = "expression"
             start = 1
             dash = list(node).index('-')
             self.args = [expressions[node[start: dash]]]
-            self.objects = []
+            self.surfaces = []
+
+        if(strType(node) == "Tree"):
+            self.set(node)
 
     def updateObjects(self):
         if(self.node_type == "constant"):
-            self.objects = []
-        if(self.node_type == "object"):
-            self.objects = [self.node]
+            self.surfaces = []
+        if(self.node_type == "variable"):
+            self.surfaces = [self.node]
         if(self.node_type == "operation"):
-            self.objects = []
+            self.surfaces = []
             for argument in self.args:
-                for o in argument.objects:
-                    if(not(o in self.objects)):
-                        self.objects += o
+                for o in argument.surfaces:
+                    if(not(o in self.surfaces)):
+                        self.surfaces.append(o)
         if(self.node_type == "expression"):
-            self.objects = []
+            self.surfaces = []
 
     def show(self, notationOveride = None):  # notations: prefix: =(x, 1), infix: x = 1, postfix: (x, 1)=, latex
         if(notationOveride == None):
@@ -156,7 +159,7 @@ class Tree:
 
         return(out)
 
-    def evaluate(self, var_values):
+    def evaluate(self, var_values = []):
         if(self.node_type == "constant"):
             return(self.node)
         elif(self.node_type == "variable"):
@@ -172,17 +175,20 @@ class Tree:
 
     def condense(self):
         if(self.node_type == "operation"):
-            self.args[0].condense()
-            self.args[1].condense()
+            if(not(self.args[0].condense() and self.args[1].condense())):
+                return(False)
             if(self.args[0].node_type == "constant" and self.args[1].node_type == "constant"):
+                if(self.node == '/' and self.args[1].node == 0):
+                    return(False)
                 self.set(Tree(opp_functions[self.node](self.args[0].args[0], self.args[1].args[0])))
+        return(True)
 
     def simplifyCopy(self, maxSteps = 200, maxCostRatio = 20):
-        from Simplification import simplify
+        from Math.simplification import simplify
         return(simplify(self, maxSteps = maxSteps, maxCostRatio = maxCostRatio))
 
     def simplify(self, maxSteps = 200, maxCostRatio = 20):
-        from Simplification import simplify
+        from Math.simplification import simplify
         self.set(simplify(self, maxSteps = maxSteps, maxCostRatio = maxCostRatio))
 
     def oldSimplify(self, timeout = 100):
@@ -241,7 +247,7 @@ class Tree:
                     self.node_type = "constant"
                     self.args = [opp_functions[self.node](self.args[0].args[0], self.args[1].args[0])]
                     self.node = self.args[0]
-                    self.objects = []
+                    self.surfaces = []
 
                 elif(self.args[1].node_type == "constant" and self.node in symetric_op):
                     self.args[0], self.args[1] = self.args[1], self.args[0]
@@ -278,7 +284,7 @@ class Tree:
         self.node = other.node
         self.node_type = other.node_type
         self.args = other.args
-        self.objects = other.objects
+        self.surfaces = other.surfaces
 
     def copy(self):
         out = type(self)(None)
@@ -288,7 +294,7 @@ class Tree:
             out.args = list(map(lambda eq: eq.copy(), self.args))
         else:
             out.args = list(self.args)
-        out.objects = list(self.objects)
+        out.surfaces = list(self.surfaces)
         return(out)
 
     def getCost(self):

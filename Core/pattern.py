@@ -4,9 +4,9 @@ Created on Apr 24, 2019
 @author: gosha
 '''
 
-from Define_Opperations import symetric_op
-from Parser import parse
-from Tree import Tree
+from Core.defineOpperations import symetric_op
+from Core.equationParser import parse
+from Core.tree import Tree
 
 
 class Pattern(Tree):

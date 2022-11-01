@@ -4,8 +4,8 @@ Created on Oct 22, 2018
 @author: Gosha
 '''
 
-from Define_Opperations import fixSymbols, ord_op
-from Tree import Tree, strType
+from Core.defineOpperations import fixSymbols, ord_op
+from Core.tree import Tree, strType
 
 
 def parse(eq, into = Tree):
@@ -29,7 +29,7 @@ def parseLoop(eq, into = Tree):
     if(len(eq) == 1):
         if(strType(eq[0]) == "operation"):
             raise SyntaxError(eq[0])
-        elif(strType(eq[0]) == "Tree"):
+        elif(strType(eq[0]) == "tree"):
             return(eq[0])
         else:
             return(into(eq[0]))

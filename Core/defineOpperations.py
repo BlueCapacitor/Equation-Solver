@@ -61,7 +61,7 @@ opp_symbols = {value: key for key, value in opp_functions.items()}
 ord_op = [['^', '_', '√'], ['*', '/'], ['+', '-'], '=']
 symetric_op = ['*', '+']
 ord_op_numbers = {'^': 3, '_': 3, '√': 3, '*': 2, '/': 2, '+': 1, '-': 1, '=': 0}
-op_costs = {'^': 3.6, '_': 5, '√': 3, '*': 3, '/': 3.5, '+': 4, '-': 4, '=': 0}
+op_costs = {'^': 3.6, '_': 5, '√': 3, '*': 3.7, '/': 3.5, '+': 4, '-': 4, '=': 0}
 
 inverse = {add: (sub, sub), sub: (add, revsub), mult: (div, div), div: (mult, revdiv), exp: (root, revlog), lg: (root, revexp)}
 
@@ -81,6 +81,20 @@ special_cases = [['+', 0, True, True, 'x'], ['-', 0, False, True, 'x'], ['*', 0,
 
 transpose = lambda ls: [[l[i] for l in ls] for i in range(len(ls))]
 merge = lambda ls, f: list(map(f, transpose(ls)))
+
+
+def binEncode(i, minBits):
+    if(i >= 0):
+        return('0' * (minBits - len(bin(i)[2:] + '0')) + bin(i)[2:] + '0')
+    else:
+        return('0' * (minBits - len(bin(1 - i)[2:] + '1')) + bin(1 - i)[2:] + '1')
+
+
+def rec(x, f, n):
+    if(n == 0):
+        return(x)
+    else:
+        return(rec(f(x), f, n - 1))
 
 
 class Base:
